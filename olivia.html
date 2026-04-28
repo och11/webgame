@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olivia — Hosted Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --neon:   #00ffe7;
+      --danger: #ff3f5b;
+      --gold:   #ffd700;
+      --bg:     #020c1b;
+      --panel:  rgba(0,255,231,0.06);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: rgba(255,255,255,0.85);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* starfield */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 12% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 38% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 58% 18%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 93% 42%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 88%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 65% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 47% 92%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 7%  52%, rgba(255,255,255,0.3) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* NAV */
+    nav {
+      position: relative; z-index: 10;
+      background: rgba(2,12,27,0.9);
+      border-bottom: 1px solid rgba(0,255,231,0.2);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem; font-weight: 900; letter-spacing: 0.15em;
+      color: var(--neon); text-decoration: none;
+      text-shadow: 0 0 10px var(--neon);
+    }
+    .nav-name { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(0,255,231,0.4); }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 2;
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(0,255,231,0.5); margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900; letter-spacing: 0.1em;
+      color: var(--neon);
+      text-shadow: 0 0 30px var(--neon), 0 0 60px rgba(0,255,231,0.3);
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      font-size: 1rem; color: rgba(255,255,255,0.5);
+      letter-spacing: 0.05em;
+    }
+
+    /* MAIN CONTENT */
+    .container {
+      position: relative; z-index: 2;
+      max-width: 860px; margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+
+    /* PLAY CARD */
+    .play-card {
+      background: var(--panel);
+      border: 1px solid rgba(0,255,231,0.25);
+      padding: 3rem;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .play-card::before {
+      content: '☄';
+      position: absolute; top: -20px; right: 20px;
+      font-size: 8rem; opacity: 0.04; line-height: 1;
+    }
+    .play-card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px var(--gold);
+    }
+    .play-btn {
+      display: inline-block;
+      background: transparent;
+      border: 2px solid var(--neon);
+      color: var(--neon);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 3rem;
+      text-decoration: none;
+      transition: background 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+    }
+    .play-btn:hover {
+      background: rgba(0,255,231,0.1);
+      box-shadow: 0 0 30px rgba(0,255,231,0.4);
+    }
+    .play-note { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 1rem; letter-spacing: 0.08em; }
+
+    /* INFO PANELS */
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(0,255,231,0.15);
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .panel-label {
+      font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--neon); opacity: 0.6; margin-bottom: 0.5rem;
+    }
+    .panel h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.1em;
+      color: var(--neon); margin-bottom: 1rem;
+    }
+    .panel p { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.75); margin-bottom: 0.8rem; }
+    .panel p:last-child { margin-bottom: 0; }
+
+    /* Controls table */
+    .controls-grid {
+      display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 1.5rem;
+      margin-top: 1rem;
+    }
+    .key {
+      display: inline-block;
+      background: rgba(0,255,231,0.1);
+      border: 1px solid rgba(0,255,231,0.3);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.1em;
+      padding: 0.25rem 0.6rem;
+      color: var(--neon);
+      white-space: nowrap;
+    }
+    .key-desc { font-size: 0.88rem; color: rgba(255,255,255,0.65); display: flex; align-items: center; }
+
+    /* Source link */
+    .source-link {
+      color: var(--neon);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,255,231,0.3);
+      transition: border-color 0.2s;
+      font-size: 0.88rem;
+      word-break: break-all;
+    }
+    .source-link:hover { border-color: var(--neon); }
+
+    /* Footer */
+    footer {
+      position: relative; z-index: 2;
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.2);
+      border-top: 1px solid rgba(0,255,231,0.08);
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="#">☄ ASTEROID DODGE</a>
+    <span class="nav-name">Olivia's Game Page</span>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">Cloud-Hosted Game · University of Miami</div>
+    <h1>ASTEROID DODGE</h1>
+    <p class="hero-sub">A browser-based space survival game — built with HTML5 Canvas & JavaScript</p>
+  </section>
+
+  <div class="container">
+
+    <!-- PLAY BUTTON -->
+    <div class="play-card">
+      <h2>⚡ Ready to Play?</h2>
+      <!-- UPDATE THIS HREF to your actual hosted game URL after uploading to Azure -->
+      <a class="play-btn" href="asteroid-dodge.html" target="_blank">▶ &nbsp; LAUNCH GAME</a>
+      <div class="play-note">Opens in a new tab · No download required · Works in all modern browsers</div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="panel">
+      <div class="panel-label">About the Game</div>
+      <h3>What Is Asteroid Dodge?</h3>
+      <p>
+        Asteroid Dodge is a fast-paced, browser-based space survival game built entirely
+        with HTML5 Canvas and vanilla JavaScript. You pilot a spacecraft through an
+        ever-intensifying asteroid field, dodging rocks and blasting them with your laser
+        cannon before they collide with your ship.
+      </p>
+      <p>
+        The game features an infinite survival loop — the longer you live, the higher your
+        score climbs and the faster and more frequent the asteroids become. Collect golden
+        stars scattered through space for bonus points, and grab shield powerups to gain
+        temporary invincibility. How long can you survive?
+      </p>
+    </div>
+
+    <!-- HOW TO PLAY -->
+    <div class="panel">
+      <div class="panel-label">Instructions</div>
+      <h3>How to Play</h3>
+      <p>Your goal is simple: don't get hit by asteroids. Survive as long as possible, rack up points, and beat your high score.</p>
+      <div class="controls-grid">
+        <span class="key">MOUSE</span>
+        <span class="key-desc">Move your ship — it follows your cursor</span>
+
+        <span class="key">ARROW KEYS</span>
+        <span class="key-desc">Alternative movement (Up / Down / Left / Right)</span>
+
+        <span class="key">SPACEBAR</span>
+        <span class="key-desc">Fire your laser cannon</span>
+
+        <span class="key">CLICK</span>
+        <span class="key-desc">Also fires the laser cannon</span>
+
+        <span class="key">⭐ STARS</span>
+        <span class="key-desc">Fly into gold stars to collect +50 bonus points</span>
+
+        <span class="key">🛡 SHIELD</span>
+        <span class="key-desc">Collect the cyan ring for 3 seconds of invincibility</span>
+      </div>
+      <p style="margin-top:1.2rem;">
+        <strong style="color:var(--neon);">Scoring:</strong> Points accumulate automatically over time, and increase faster as your level rises. Shooting large asteroids requires two hits. Every asteroid you destroy awards points equal to its size.
+      </p>
+    </div>
+
+    <!-- SOURCE -->
+    <div class="panel">
+      <div class="panel-label">Source & Credits</div>
+      <h3>Game Source</h3>
+      <p>
+        This game was written from scratch using <strong>HTML5 Canvas</strong>, <strong>CSS3</strong>,
+        and <strong>vanilla JavaScript</strong> — no external game libraries or frameworks were used.
+        The full source code for this game was generated and is available here:
+      </p>
+      <p>
+        <strong>Source URL:</strong><br />
+        <a class="source-link" href="https://claude.ai" target="_blank">
+          https://claude.ai — Generated via Claude AI (Anthropic)
+        </a>
+      </p>
+      <p style="margin-top:0.8rem; font-size:0.82rem; color:rgba(255,255,255,0.4);">
+        The game code (asteroid-dodge.html) is a self-contained single HTML file using the
+        HTML5 Canvas API for rendering, requestAnimationFrame for the game loop, and keyboard/mouse
+        event listeners for input handling. Hosted on Microsoft Azure Static Web Apps.
+      </p>
+    </div>
+
+    <!-- HOSTING INFO -->
+    <div class="panel">
+      <div class="panel-label">Hosting Details</div>
+      <h3>Cloud Deployment</h3>
+      <p>
+        This game and page are hosted on <strong style="color:var(--neon);">Microsoft Azure Static Web Apps</strong> —
+        a Platform-as-a-Service (PaaS) offering that serves static HTML, CSS, and JavaScript files
+        directly from Azure's global CDN with automatic HTTPS.
+      </p>
+      <p>
+        <strong>Platform:</strong> Microsoft Azure Static Web Apps (Free Tier)<br />
+        <strong>Region:</strong> East US 2<br />
+        <strong>Files hosted:</strong> olivia.html, asteroid-dodge.html
+      </p>
+    </div>
+
+  </div>
+
+  <footer>
+    OLIVIA · UNIVERSITY OF MIAMI · CLOUD COMPUTING · ASTEROID DODGE
+  </footer>
+
+</body>
+</html>
